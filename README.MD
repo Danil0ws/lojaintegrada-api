@@ -1,6 +1,13 @@
 
 A complete-to-be NodeJs client for [Loja Integrada](http://www.lojaintegrada.com.br) api requests.
 
+🚧 **Loja Integrada Api is under development** 🚧
+
+
+## Building
+
+You'll need [Node.js](https://nodejs.org) installed on your computer in order to build this app.
+
 ## Installation
 
 To install, simply run
@@ -19,6 +26,10 @@ To install, simply run
 # TODO
 
 - [X] Start usage description
+
+## Contributing
+
+This repository is currently under development. If you want to contribute please fork the repository and get your hands dirty, and make the changes as you'd like and submit the Pull request.
 
 # License
 
