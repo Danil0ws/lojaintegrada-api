@@ -1,0 +1,67 @@
+{
+  "name": "lojaintegrada-api",
+  "version": "1.0.0",
+  "license": "MIT",
+  "description": "🏪 Loja Integrada Javascript API",
+  "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
+  "dependencies": {
+    "@types/joi": "^17.2.3",
+    "axios": "^0.21.1",
+    "joi": "^17.4.0",
+    "joi-with-jest": "^2.1.0",
+    "jsdoc": "^3.6.6",
+    "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.13.16",
+    "@babel/preset-env": "^7.13.15",
+    "@sucrase/jest-plugin": "^2.1.0",
+    "@types/jest": "^26.0.22",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "^14.14.41",
+    "@types/node-fetch": "^2.5.10",
+    "dotenv": "^8.2.0",
+    "jest": "^26.6.3",
+    "nodemon": "^2.0.7",
+    "rimraf": "^3.0.2",
+    "sucrase": "^3.18.1",
+    "ts-jest": "^26.5.5",
+    "typescript": "^4.2.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BuffDev/lojaintegrada-api.git"
+  },
+  "keywords": [
+    "Loja Integrada",
+    "lojaintegrada",
+    "li",
+    "node",
+    "api"
+  ],
+  "author": "Buff Developers",
+  "bugs": {
+    "url": "https://github.com/BuffDev/lojaintegrada-api/issues"
+  },
+  "homepage": "https://github.com/BuffDev/lojaintegrada-api#readme",
+  "scripts": {
+    "dev": "npx nodemon  src/lojaintegrada-api.ts",
+    "prebuild": "npx rimraf dist",
+    "build": "npx sucrase ./src -d ./dist --transforms typescript,imports",
+    "test": "npx jest",
+    "jsdoc": "npx jsdoc dist/services/loja-integrada.js"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "transform": {
+      "node_modules/variables/.+\\.(j|t)sx?$": "@sucrase/jest-plugin"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!variables/.*)"
+    ]
+  }
+}
