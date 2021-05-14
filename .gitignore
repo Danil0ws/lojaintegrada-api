@@ -1,6 +1,6 @@
 node_modules
 .env
-src/lojaintegrada-api.ts
+/src/lojaintegrada-api.ts
 test.env
 Dockerfile
 docker-compose.yml
