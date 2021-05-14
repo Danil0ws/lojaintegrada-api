@@ -90,6 +90,25 @@ interface variationAddData {
 interface variationEditData {
   nome?: string;
 }
+interface stockEditData {
+  gerenciado: boolean;
+  quantidade: number;
+  situacao_em_estoque: number;
+  situacao_em_estoque: number;
+}
+interface stocksDataIds {
+  join(arg0: string): string;
+  [index: number]: any;
+}
+interface priceDataIds {
+    join(arg0: string): string;
+    [index: number]: any;
+}
+interface priceEditData {
+  nome?: string;
+  descricao?: string;
+  categoria_pai?: string;
+}
 interface clientAddData {
   
 }
@@ -123,7 +142,14 @@ export function getGridById(): Promise<number>
 export function addGrid(): Promise<gridAddData[]>
 export function editGrid(): Promise<number, gridEditData[]>
 
-
 export function getVariation(): Promise<number?, number?>
 export function addVariation(): Promise<number, variationAddData[]>
 export function editVariation(): Promise<number, variationEditData[]>
+
+export function getStocks(): Promise<number?, number?>
+export function getStockById(): Promise<number>
+export function editStock(): Promise<number, stockEditData[]>
+
+export function getPrices(): Promise<number?, number?>
+export function getListPrices(): Promise<priceDataIds[]>
+export function editPrice(): Promise<number, priceEditData[]>

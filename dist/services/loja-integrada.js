@@ -1,23 +1,25 @@
 "use strict";Object.defineProperty(exports, "__esModule", {value: true}); function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }var _nodefetch = require('node-fetch'); var _nodefetch2 = _interopRequireDefault(_nodefetch);
-
 var _url = require('url');
 
 
 const ApiUrlProd = 'https://api.awsli.com.br/api/v1'
 const ApiUrlTest = 'https://private-anon-f07889c886-lojaintegrada.apiary-mock.com/v1'
-
+/**
+ * Creates a new LojaIntegrada.
+ * @class
+ */
  class LojaIntegrada {
     
     
     
     
     /**
-    * Loja Integrada constructor
+    * LojaIntegrada constructor
     * @constructor
-    * @param {string} ApiKey
-    * @param {string} AppKey
-    * @param {boolean} DesBug
-    * @return {class} Class
+    * @param {string} ApiKey Chave de Api
+    * @param {string} AppKey Chave de Aplicacao
+    * @param {boolean} DesBug Modo Produção ou Desenvolvimento
+    * @return {class}
     */
     constructor(ApiKey, AppKey, DesBug = false) {
         this.ApiUrl = (DesBug == false) ? ApiUrlProd : ApiUrlTest

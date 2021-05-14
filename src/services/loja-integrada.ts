@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
-import axios from 'axios'
 import { URL, URLSearchParams } from 'url'
+import type { priceDataIds, priceEditData, stockAddData, stockEditData, stocksDataIds } from '../../type'
 import type { productAddData, productEditData, categoryAddData, categoryEditData, categoryDataIds, brandEditData, brandDataIds, brandAddData, gridAddData, gridEditData, variationAddData, variationEditData } from '../../type/services/loja-integrada'
 
 const ApiUrlProd:string = 'https://api.awsli.com.br/api/v1'
@@ -19,7 +19,7 @@ export default class LojaIntegrada {
     * @constructor
     * @param {string} ApiKey Chave de Api
     * @param {string} AppKey Chave de Aplicacao
-    * @param {boolean} DesBug Chave de Aplicacao
+    * @param {boolean} DesBug Modo Produção ou Desenvolvimento
     * @return {class}
     */
     constructor(ApiKey: string, AppKey: string, DesBug: boolean = false) {
@@ -32,6 +32,8 @@ export default class LojaIntegrada {
             'format': 'json'
         })            
     }
+
+    // Product's
 
     /**
      * Get All Products
@@ -143,7 +145,7 @@ export default class LojaIntegrada {
                             'Content-Type': 'application/json'
                         }
                     })
-                    .then((response: { json: () => object }) => response.json())
+                    .then((response: { json: () => any }) => response.json())
                     .then(function (result: object | PromiseLike<object>) {
                         resolve(result)
                     })
@@ -155,8 +157,12 @@ export default class LojaIntegrada {
             }
         })
     }
-    // getProductById
-    public getProductById(ProductId:number) { 
+    /**
+     * Get Product by Id
+     * @param {number} ProductId
+     * @return {Promise<object>} 
+     */
+    public getProductById(ProductId:number): Promise<object> { 
         return new Promise(async (resolve, reject) => {
             try {
                 await fetch(new URL(`${this.ApiUrl}/produto/${ProductId}?${this.ApiParams}`), {
@@ -166,7 +172,7 @@ export default class LojaIntegrada {
                         }
                     })
                     .then((response: { json: () => any }) => response.json())
-                    .then((result: unknown) => {
+                    .then((result: object | PromiseLike<object>) => {
                         resolve(result)
                     })
                     .catch((err: string | undefined) => {
@@ -177,8 +183,12 @@ export default class LojaIntegrada {
             }
         })
     }
-    // getProductBySKU
-    public getProductBySKU(ProducSKU:string) { 
+    /**
+     * Get Product by SKU
+     * @param {string} ProducSKU
+     * @return {Promise<object>} 
+     */
+    public getProductBySKU(ProducSKU:string): Promise<object> { 
         return new Promise(async (resolve, reject) => {
             try {
                 let addonsParams = new URLSearchParams({
@@ -191,7 +201,7 @@ export default class LojaIntegrada {
                         }
                     })
                     .then((response: { json: () => any }) => response.json())
-                    .then((result: unknown) => {
+                    .then((result: object | PromiseLike<object>) => {
                         resolve(result)
                     })
                     .catch((err: string | undefined) => {
@@ -202,8 +212,12 @@ export default class LojaIntegrada {
             }
         })
     }
-    // getProductBySKU
-    public addProduct(ProductData:productAddData) { 
+    /**
+     * Add New Product
+     * @param {productAddData} ProductData
+     * @return {Promise<object>} 
+     */
+    public addProduct(ProductData:productAddData): Promise<object> { 
         return new Promise(async (resolve, reject) => {
             try {
                 
@@ -215,7 +229,7 @@ export default class LojaIntegrada {
                         }
                     })
                     .then((response: { json: () => any }) => response.json())
-                    .then(function (result: unknown) {
+                    .then(function (result: object | PromiseLike<object>) {
                         resolve(result)
                     })
                     .catch((err: string | undefined) => {
@@ -226,8 +240,13 @@ export default class LojaIntegrada {
             }
         })
     }
-    // getProductBySKU
-    public editProduct(ProductId:number, ProductData:productEditData) { 
+    /**
+     * Edit Product
+     * @param {number} ProductId
+     * @param {productEditData} ProductData
+     * @return {Promise<object>} 
+     */
+    public editProduct(ProductId:number, ProductData:productEditData): Promise<object> { 
         return new Promise(async (resolve, reject) => {
             try {
                
@@ -239,7 +258,7 @@ export default class LojaIntegrada {
                         }
                     })
                     .then((response: { json: () => any }) => response.json())
-                    .then(function (result: unknown) {
+                    .then(function (result: object | PromiseLike<object>) {
                         resolve(result)
                     })
                     .catch((err: string | undefined) => {
@@ -257,9 +276,9 @@ export default class LojaIntegrada {
      * Get All Categories
      * @param {number} limit
      * @param {number} offset
-     * @return {Promise} Promise object json
+     * @return {Promise<object>} 
      */
-    public getCategories(limit:number = 20, offset:number = 0): Promise<any> {
+    public getCategories(limit:number = 20, offset:number = 0): Promise<object> {
         return new Promise(async (resolve, reject) => {
             try {
                 let addonsParams = new URLSearchParams({
@@ -273,7 +292,7 @@ export default class LojaIntegrada {
                         }
                     })
                     .then((response: { json: () => any }) => response.json())
-                    .then(function (result: any) {
+                    .then(function (result: object | PromiseLike<object>) {
                         resolve(result)
                     })
                     .catch((err: string | undefined) => {
@@ -285,12 +304,11 @@ export default class LojaIntegrada {
         })
     }
     /**
-     * Get For List Categories
-     * Shows details
-     * 
-     * @return {Promise} Promise object json
+     * Get List Categories by Id
+     * @param {categoryDataIds} CategoryIds
+     * @return {Promise<object>} 
      */
-     public getListCategories(CategoryIds:categoryDataIds) {
+    public getListCategories(CategoryIds:categoryDataIds): Promise<object> {
         return new Promise(async (resolve, reject) => {
             try {
                 let CategoryIdsString:string = CategoryIds.join(';')
@@ -301,7 +319,7 @@ export default class LojaIntegrada {
                         }
                     })
                     .then((response: { json: () => any }) => response.json())
-                    .then(function (result: unknown) {
+                    .then(function (result: object | PromiseLike<object>) {
                         resolve(result)
                     })
                     .catch((err: string | undefined) => {
@@ -314,12 +332,10 @@ export default class LojaIntegrada {
     }    
     /**
     * Get Category by ID
-    * Shows details Category
-    *
     * @param {number} CategoryId
-    * @return {Promise} Promise object json
+    * @return {Promise<object>} 
     */
-    public getCategory(CategoryId:number) {
+    public getCategory(CategoryId:number): Promise<object> {
         return new Promise(async (resolve, reject) => {
             try {                
                 await fetch(new URL(`${this.ApiUrl}/categoria/${CategoryId}?${this.ApiParams}`), {
@@ -329,7 +345,7 @@ export default class LojaIntegrada {
                         }
                     })
                     .then((response: { json: () => any }) => response.json())
-                    .then(function (result: unknown) {
+                    .then(function (result: object | PromiseLike<object>) {
                         resolve(result)
                     })
                     .catch((err: string | undefined) => {
@@ -341,12 +357,11 @@ export default class LojaIntegrada {
         })
     }
     /**
-    * Add Category
-    * 
-    * @param categoryAddData CategoryData
-    * @return {Promise} Promise object json
+    * Add New Category
+    * @param {categoryAddData} CategoryData
+    * @return {Promise<object>} 
     */
-    public addCategory(CategoryData:categoryAddData) {
+    public addCategory(CategoryData:categoryAddData): Promise<object>  {
         return new Promise(async (resolve, reject) => {
             try {                
                 await fetch(new URL(`${this.ApiUrl}/categoria?${this.ApiParams}`), {
@@ -357,7 +372,7 @@ export default class LojaIntegrada {
                         }
                     })
                     .then((response: { json: () => any }) => response.json())
-                    .then(function (result: unknown) {
+                    .then(function (result: object | PromiseLike<object>) {
                         resolve(result)
                     })
                     .catch((err: string | undefined) => {
@@ -370,12 +385,11 @@ export default class LojaIntegrada {
     }
     /**
     * Edit Category
-    * 
     * @param {number} CategoryId
-    * @param categoryEditData CategoryData
-    * @return {Promise} Promise object json
+    * @param {categoryEditData} CategoryData
+    * @return {Promise<object>} 
     */
-    public editCategory(CategoryId:number, CategoryData:categoryEditData) {
+    public editCategory(CategoryId:number, CategoryData:categoryEditData): Promise<object> {
         return new Promise(async (resolve, reject) => {
             try {                
                 await fetch(new URL(`${this.ApiUrl}/categoria/${CategoryId}?${this.ApiParams}`), {
@@ -386,7 +400,7 @@ export default class LojaIntegrada {
                         }
                     })
                     .then((response: { json: () => any }) => response.json())
-                    .then(function (result: unknown) {
+                    .then(function (result: object | PromiseLike<object>) {
                         resolve(result)
                     })
                     .catch((err: string | undefined) => {
@@ -404,9 +418,9 @@ export default class LojaIntegrada {
     * Get All Brands
     * @param {number} limit
     * @param {number} offset
-    * @return {Promise} Promise object json
+    * @return {Promise<object>} 
     */
-    public getBrands(limit:number = 20, offset:number = 0): Promise<any> {
+    public getBrands(limit:number = 20, offset:number = 0): Promise<object> {
         return new Promise(async (resolve, reject) => {
             try {
                 let addonsParams = new URLSearchParams({
@@ -420,7 +434,7 @@ export default class LojaIntegrada {
                         }
                     })
                     .then((response: { json: () => any }) => response.json())
-                    .then(function (result: any) {
+                    .then(function (result: object | PromiseLike<object>) {
                         resolve(result)
                     })
                     .catch((err: string | undefined) => {
@@ -434,9 +448,9 @@ export default class LojaIntegrada {
     /**
      * Get For List Brands
      * @param {number} BrandIds
-     * @return {Promise} Promise object json
+     * @return {Promise<object>} 
      */
-    public getListBrands(BrandIds:brandDataIds) {
+    public getListBrands(BrandIds:brandDataIds): Promise<object> {
         return new Promise(async (resolve, reject) => {
             try {
                 let BrandIdsString:string = BrandIds.join(';')
@@ -447,7 +461,7 @@ export default class LojaIntegrada {
                         }
                     })
                     .then((response: { json: () => any }) => response.json())
-                    .then(function (result: unknown) {
+                    .then(function (result: object | PromiseLike<object>) {
                         resolve(result)
                     })
                     .catch((err: string | undefined) => {
@@ -463,9 +477,9 @@ export default class LojaIntegrada {
     * Shows details Brand
     *
     * @param {number} BrandId
-    * @return {Promise} Promise object json
+    * @return {Promise<object>} 
     */
-    public getBrand(BrandId:number) {
+    public getBrand(BrandId:number): Promise<object> {
         return new Promise(async (resolve, reject) => {
             try {                
                 await fetch(new URL(`${this.ApiUrl}/marca/${BrandId}?${this.ApiParams}`), {
@@ -475,7 +489,7 @@ export default class LojaIntegrada {
                         }
                     })
                     .then((response: { json: () => any }) => response.json())
-                    .then(function (result: unknown) {
+                    .then(function (result: object | PromiseLike<object>) {
                         resolve(result)
                     })
                     .catch((err: string | undefined) => {
@@ -487,11 +501,11 @@ export default class LojaIntegrada {
         })
     }
     /**
-    * Add Brand
+    * Add New Brand
     * @param brandAddData BrandData
-    * @return {Promise} Promise object json
+    * @return {Promise<object>} 
     */
-    public addBrand(BrandData:brandAddData) {
+    public addBrand(BrandData:brandAddData): Promise<object> {
         return new Promise(async (resolve, reject) => {
             try {                
                 await fetch(new URL(`${this.ApiUrl}/marca?${this.ApiParams}`), {
@@ -502,7 +516,7 @@ export default class LojaIntegrada {
                         }
                     })
                     .then((response: { json: () => any }) => response.json())
-                    .then(function (result: unknown) {
+                    .then(function (result: object | PromiseLike<object>) {
                         resolve(result)
                     })
                     .catch((err: string | undefined) => {
@@ -516,10 +530,10 @@ export default class LojaIntegrada {
     /**
     * Edit Brand
     * @param {number} BrandId
-    * @param brandEditData BrandData
-    * @return {Promise} Promise object json
+    * @param {brandEditData} BrandData
+    * @return {Promise<object>} 
     */
-    public editBrand(BrandId:number, BrandData:brandEditData) {
+    public editBrand(BrandId:number, BrandData:brandEditData): Promise<object> {
         return new Promise(async (resolve, reject) => {
             try {                
                 await fetch(new URL(`${this.ApiUrl}/marca/${BrandId}?${this.ApiParams}`), {
@@ -530,7 +544,7 @@ export default class LojaIntegrada {
                         }
                     })
                     .then((response: { json: () => any }) => response.json())
-                    .then(function (result: unknown) {
+                    .then(function (result: object | PromiseLike<object>) {
                         resolve(result)
                     })
                     .catch((err: string | undefined) => {
@@ -548,9 +562,9 @@ export default class LojaIntegrada {
     * Get All Grids
     * @param {number} limit
     * @param {number} offset
-    * @return {Promise} Promise object json
+    * @return {Promise<object>} 
     */
-     public getGrids(limit:number = 20, offset:number = 0): Promise<any> {
+    public getGrids(limit:number = 20, offset:number = 0): Promise<object> {
         return new Promise(async (resolve, reject) => {
             try {
                 let addonsParams = new URLSearchParams({
@@ -564,7 +578,7 @@ export default class LojaIntegrada {
                         }
                     })
                     .then((response: { json: () => any }) => response.json())
-                    .then(function (result: any) {
+                    .then(function (result: object | PromiseLike<object>) {
                         resolve(result)
                     })
                     .catch((err: string | undefined) => {
@@ -578,9 +592,9 @@ export default class LojaIntegrada {
     /**
     * Get Grid by ID
     * @param {number} GridId
-    * @return {Promise} Promise object json
+    * @return {Promise<object>} 
     */
-    public getGridbyID(GridId:number) {
+    public getGridbyID(GridId:number): Promise<object> {
         return new Promise(async (resolve, reject) => {
             try {                
                 await fetch(new URL(`${this.ApiUrl}/grades/${GridId}?${this.ApiParams}`), {
@@ -590,7 +604,7 @@ export default class LojaIntegrada {
                         }
                     })
                     .then((response: { json: () => any }) => response.json())
-                    .then(function (result: unknown) {
+                    .then(function (result: object | PromiseLike<object>) {
                         resolve(result)
                     })
                     .catch((err: string | undefined) => {
@@ -602,11 +616,11 @@ export default class LojaIntegrada {
         })
     }
     /**
-    * Add Grid
-    * @param gridAddData GridData
-    * @return {Promise} Promise object json
+    * Add New Grid
+    * @param {gridAddData} GridData
+    * @return {Promise<object>} 
     */
-    public addGrid(GridData:gridAddData) {
+    public addGrid(GridData:gridAddData): Promise<object> {
         return new Promise(async (resolve, reject) => {
             try {                
                 await fetch(new URL(`${this.ApiUrl}/grades?${this.ApiParams}`), {
@@ -617,7 +631,7 @@ export default class LojaIntegrada {
                         }
                     })
                     .then((response: { json: () => any }) => response.json())
-                    .then(function (result: unknown) {
+                    .then(function (result: object | PromiseLike<object>) {
                         resolve(result)
                     })
                     .catch((err: string | undefined) => {
@@ -631,10 +645,10 @@ export default class LojaIntegrada {
     /**
     * Edit Grid
     * @param {number} GridId
-    * @param gridEditData GridData
-    * @return {Promise} Promise object json
+    * @param {gridEditData} GridData
+    * @return {Promise<object>} 
     */
-    public editGrid(GridId:number, GridData:gridEditData) {
+    public editGrid(GridId:number, GridData:gridEditData): Promise<object> {
         return new Promise(async (resolve, reject) => {
             try {                
                 await fetch(new URL(`${this.ApiUrl}/grades/${GridId}?${this.ApiParams}`), {
@@ -645,7 +659,7 @@ export default class LojaIntegrada {
                         }
                     })
                     .then((response: { json: () => any }) => response.json())
-                    .then(function (result: unknown) {
+                    .then(function (result: object | PromiseLike<object>) {
                         resolve(result)
                     })
                     .catch((err: string | undefined) => {
@@ -661,12 +675,10 @@ export default class LojaIntegrada {
 
     /**
      * Get All Variations
-     * Shows details
-     *  
      * @param {number} GridId
-     * @return {Promise} Promise object json
+     * @return {Promise<object>} 
      */
-     public getVariations(GridId:number) {
+    public getVariations(GridId:number): Promise<object> {
         return new Promise(async (resolve, reject) => {
             try {                
                 await fetch(new URL(`${this.ApiUrl}/grades/${GridId}/variacao?${this.ApiParams}`), {
@@ -676,7 +688,7 @@ export default class LojaIntegrada {
                         }
                     })
                     .then((response: { json: () => any }) => response.json())
-                    .then(function (result: unknown) {
+                    .then(function (result: object | PromiseLike<object>) {
                         resolve(result)
                     })
                     .catch((err: string | undefined) => {
@@ -689,18 +701,15 @@ export default class LojaIntegrada {
     }
     /**
     * Get Variation by ID
-    * Shows details Variation
-    *
     * @param {number} VariationId
-    * @return {Promise} Promise object json
+    * @return {Promise<object>} 
     */
     /**
-    * Add Variation
-    * 
-    * @param variationAddData VariationData
-    * @return {Promise} Promise object json
+    * Add New Variation
+    * @param {variationAddData} VariationData
+    * @return {Promise<object>} 
     */
-    public addVariation(GridId:number, VariationData:variationAddData) {
+    public addVariation(GridId:number, VariationData:variationAddData): Promise<object> {
         return new Promise(async (resolve, reject) => {
             try {                
                 await fetch(new URL(`${this.ApiUrl}/grades/${GridId}/variacao?${this.ApiParams}`), {
@@ -711,7 +720,7 @@ export default class LojaIntegrada {
                         }
                     })
                     .then((response: { json: () => any }) => response.json())
-                    .then(function (result: unknown) {
+                    .then(function (result: object | PromiseLike<object>) {
                         resolve(result)
                     })
                     .catch((err: string | undefined) => {
@@ -727,10 +736,10 @@ export default class LojaIntegrada {
     * 
     * @param {number} GridId
     * @param {number} VariationId
-    * @param variationEditData VariationData
-    * @return {Promise} Promise object json
+    * @param {variationEditData} VariationData
+    * @return {Promise<object>} 
     */
-    public editVariation(GridId:number, VariationId:number, VariationData:variationEditData) {
+    public editVariation(GridId:number, VariationId:number, VariationData:variationEditData): Promise<object> {
         return new Promise(async (resolve, reject) => {
             try {                
                 await fetch(new URL(`${this.ApiUrl}/grades/${GridId}/variacao/${VariationId}?${this.ApiParams}`), {
@@ -741,7 +750,7 @@ export default class LojaIntegrada {
                         }
                     })
                     .then((response: { json: () => any }) => response.json())
-                    .then(function (result: unknown) {
+                    .then(function (result: object | PromiseLike<object>) {
                         resolve(result)
                     })
                     .catch((err: string | undefined) => {
@@ -753,4 +762,235 @@ export default class LojaIntegrada {
         })
     }
 
+    // Stock's
+
+    /**
+    * Get All Stocks
+    * @param {number} limit
+    * @param {number} offset
+    * @return {Promise<object>} 
+    */
+    public getStocks(limit:number = 20, offset:number = 0): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let addonsParams = new URLSearchParams({
+                    limit: limit.toString(),
+                    offset: offset.toString()
+                })
+                await fetch(new URL(`${this.ApiUrl}/produto_estoque?${this.ApiParams}&${addonsParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+    /**
+    * Get Stock by ID
+    * @param {number} StockId
+    * @return {Promise<object>} 
+    */
+    public getStockbyID(StockId:number): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {                
+                await fetch(new URL(`${this.ApiUrl}/produto_estoque/${StockId}?${this.ApiParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+    /**
+     * Get List Stock by Id
+     * @param {stocksDataIds} StocksIds
+     * @return {Promise<object>} 
+     */
+    public getListStocks(StocksIds:stocksDataIds): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let StocksIdsString:string = StocksIds.join(';')
+                await fetch(new URL(`${this.ApiUrl}/produto_estoque/set/${StocksIdsString}?${this.ApiParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }  
+    /**
+    * Edit Stock
+    * @param {number} StockId
+    * @param {stockEditData} StockData
+    * @return {Promise<object>} 
+    */
+    public editStock(StockId:number, StockData:stockEditData): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {                
+                await fetch(new URL(`${this.ApiUrl}/produto_estoque/${StockId}?${this.ApiParams}`), {
+                    method: 'PUT',
+                    body: JSON.stringify(StockData),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }    
+
+    // Price's
+
+    /**
+     * Get All Prices
+     * @param {number} limit
+     * @param {number} offset
+     * @return {Promise<object>} 
+     */
+    public getPrices(limit:number = 20, offset:number = 0): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let addonsParams = new URLSearchParams({
+                    limit: limit.toString(),
+                    offset: offset.toString()
+                })
+                await fetch(new URL(`${this.ApiUrl}/produto_preco?${this.ApiParams}&${addonsParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+    /**
+     * Get List Prices by Id
+     * @param {priceDataIds} PriceIds
+     * @return {Promise<object>} 
+     */
+    public getListPrices(PriceIds:priceDataIds): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let PriceIdsString:string = PriceIds.join(';')
+                await fetch(new URL(`${this.ApiUrl}/produto_preco/set/${PriceIdsString}?${this.ApiParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }    
+    /**
+    * Get Price by ID
+    * @param {number} PriceId
+    * @return {Promise<object>} 
+    */
+    public getPrice(PriceId:number): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {                
+                await fetch(new URL(`${this.ApiUrl}/produto_preco/${PriceId}?${this.ApiParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+    /**
+    * Edit Price
+    * @param {number} PriceId
+    * @param {priceEditData} PriceData
+    * @return {Promise<object>} 
+    */
+    public editPrice(PriceId:number, PriceData:priceEditData): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {                
+                await fetch(new URL(`${this.ApiUrl}/produto_preco/${PriceId}?${this.ApiParams}`), {
+                    method: 'PUT',
+                    body: JSON.stringify(PriceData),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    
 }
