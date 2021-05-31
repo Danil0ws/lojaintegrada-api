@@ -1,49 +1,3 @@
-interface productAddData {
-  sku: string;
-  nome: string;
-  descricao_completa?: string ;
-  ativo: boolean;
-  destaque: boolean;
-  tipo: 'normal' | 'atributo_opcao' | 'atributo';
-  usado: false;
-  categorias?: Array<string> | null;
-}
-interface productEditData {
-  sku?: string;
-  nome?: string;
-  descricao_completa?: string ;
-  ativo?: boolean;
-  destaque?: boolean;
-  tipo?: 'normal' | 'atributo_opcao' | 'atributo';
-  usado?: false;
-  categorias?: Array<string> | null;
-}
-interface couponAddData {
-  aplicar_no_total: boolean;
-  ativo: boolean;
-  codigo: string;
-  cumulativo: boolean;
-  descricao?: number;
-  quantidade: number;
-  quantidade_por_cliente?: number;
-  tipo: 'fixo' | 'atributo_opcao' | 'atributo';
-  validade?: string;
-  valor: string;
-  valor_minimo?: string;
-}
-interface couponEditData {
-  aplicar_no_total?: boolean;
-  ativo: boolean;
-  codigo?: string;
-  cumulativo?: boolean;
-  descricao?: number;
-  quantidade?: number;
-  quantidade_por_cliente?: number;
-  tipo?: 'fixo' | 'atributo_opcao' | 'atributo';
-  validade?: string;
-  valor?: string;
-  valor_minimo?: string;
-}
 interface categoryDataIds {
   join(arg0: string): string;
   [index: number]: any;
@@ -109,6 +63,64 @@ interface priceEditData {
   descricao?: string;
   categoria_pai?: string;
 }
+interface productAddData {
+  sku: string;
+  nome: string;
+  descricao_completa?: string ;
+  ativo: boolean;
+  destaque: boolean;
+  tipo: 'normal' | 'atributo_opcao' | 'atributo';
+  usado: false;
+  categorias?: Array<string> | null;
+}
+interface productEditData {
+  sku?: string;
+  nome?: string;
+  descricao_completa?: string ;
+  ativo?: boolean;
+  destaque?: boolean;
+  tipo?: 'normal' | 'atributo_opcao' | 'atributo';
+  usado?: false;
+  categorias?: Array<string> | null;
+}
+interface couponAddData {
+  aplicar_no_total: boolean;
+  ativo: boolean;
+  codigo: string;
+  cumulativo: boolean;
+  descricao?: number;
+  quantidade: number;
+  quantidade_por_cliente?: number;
+  tipo: 'fixo' | 'atributo_opcao' | 'atributo';
+  validade?: string;
+  valor: string;
+  valor_minimo?: string;
+}
+interface couponEditData {
+  aplicar_no_total?: boolean;
+  ativo: boolean;
+  codigo?: string;
+  cumulativo?: boolean;
+  descricao?: number;
+  quantidade?: number;
+  quantidade_por_cliente?: number;
+  tipo?: 'fixo' | 'atributo_opcao' | 'atributo';
+  validade?: string;
+  valor?: string;
+  valor_minimo?: string;
+}
+interface productImageAddData {
+  
+}
+interface productImageEditData {
+  
+}
+interface seoAddData {
+  
+}
+interface seoEditData {
+  
+}
 interface clientAddData {
   
 }
@@ -117,13 +129,6 @@ interface clientEditData {
 }
 
 export function LojaIntegrada(string, string, boolean)
-
-
-export function getProducts(): Promise<number?, number?, boolean?, boolean?, 'criacao' | 'modificacao', '__lt' | '__lte'  | '__gt' | '__gte', string>
-export function getProductById(): Promise<number>
-export function getProductBySKU():Promise<string>
-export function addProduct(): Promise<productAddData[]>
-export function editProduct(): Promise<number, productEditData[]>
 
 export function getCategories(): Promise<number?, number?>
 export function getListCategories(): Promise<categoryDataIds[]>
@@ -153,3 +158,37 @@ export function editStock(): Promise<number, stockEditData[]>
 export function getPrices(): Promise<number?, number?>
 export function getListPrices(): Promise<priceDataIds[]>
 export function editPrice(): Promise<number, priceEditData[]>
+
+export function getProducts(): Promise<number?, number?, boolean?, boolean?>
+export function getProductsbyDate(): Promise<number?, number?, boolean?, boolean?, 'criacao' | 'modificacao', '__lt' | '__lte'  | '__gt' | '__gte', string>
+export function getProductById(): Promise<number>
+export function getProductBySKU():Promise<string>
+export function addProduct(): Promise<productAddData[]>
+export function editProduct(): Promise<number, productEditData[]>
+
+export function getProductImages(): Promise<number?, number?>
+export function getProductImageById(): Promise<number>
+export function addProductImage(): Promise<number, productImageAddData[]>
+export function editProductImage(): Promise<number, productImageEditData[]>
+
+export function getSeos(): Promise<number?, number?>
+export function getSeoById(): Promise<number>
+export function addSeo(): Promise<number, seoAddData[]>
+export function editSeo(): Promise<number, seoEditData[]>
+
+export function getClients(): Promise<number?, number?>
+export function getClientById(): Promise<number>
+export function addClient(): Promise<number, clientAddData[]>
+export function editClient(): Promise<number, clientEditData[]>
+
+export function getGroups(): Promise<number?, number?>
+export function getGroupById(): Promise<number>
+
+export function getBanks(): Promise<number?, number?>
+export function getBankById(): Promise<number>
+    
+export function getPayments(): Promise<number?, number?>
+export function getPaymentById(): Promise<number>
+
+export function getShippings(): Promise<number?, number?>
+export function getShippingById(): Promise<number>

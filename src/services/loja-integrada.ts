@@ -1,7 +1,29 @@
 import fetch from 'node-fetch'
 import { URL, URLSearchParams } from 'url'
-import type { priceDataIds, priceEditData, stockAddData, stockEditData, stocksDataIds } from '../../type'
-import type { productAddData, productEditData, categoryAddData, categoryEditData, categoryDataIds, brandEditData, brandDataIds, brandAddData, gridAddData, gridEditData, variationAddData, variationEditData } from '../../type/services/loja-integrada'
+import type {   
+    categoryAddData,
+    categoryEditData,
+    categoryDataIds,
+    brandEditData,
+    brandDataIds,
+    brandAddData,
+    gridAddData,
+    gridEditData,
+    variationAddData,
+    variationEditData,
+    priceDataIds,
+    priceEditData,
+    stockEditData,
+    stocksDataIds,
+    productAddData,
+    productEditData,
+    productImageEditData,
+    productImageAddData,
+    seoEditData,
+    seoAddData,
+    clientEditData,
+    clientAddData
+} from '../../type'
 
 const ApiUrlProd:string = 'https://api.awsli.com.br/api/v1'
 const ApiUrlTest:string = 'https://private-anon-f07889c886-lojaintegrada.apiary-mock.com/v1'
@@ -31,243 +53,6 @@ export default class LojaIntegrada {
             'chave_api': this.ApiKey,
             'format': 'json'
         })            
-    }
-
-    // Product's
-
-    /**
-     * Get All Products
-     * @param {number} limit
-     * @param {number} offset
-     * @param {boolean} description_html [Para retornar a descrição é necessário passar: true]
-     * @param {boolean} ativo
-     * @param {'criacao' | 'modificacao'} data_type
-     * @param {'__lt' | '__lte'  | '__gt' | '__gte'} data_filter
-     * @param {string} data_value
-     * @return {Promise<object>} 
-     */
-    public getProducts(limit:number = 20, offset:number = 0, description_html:boolean = false, ativo:boolean = true, data_type: 'criacao' | 'modificacao' | '' = '', data_filter:'__lt' | '__lte'  | '__gt' | '__gte' = '__lt', data_value:string = ''): Promise<object> { 
-        return new Promise(async (resolve, reject) => {
-            try {
-                let addonsParams
-                if (data_filter.length > 0) {
-                    if (data_type == 'modificacao') { 
-                        switch (data_filter) {
-                            case '__lt':
-                                addonsParams = new URLSearchParams({
-                                    description_html: description_html.toString(),
-                                    limit: limit.toString(),
-                                    offset: offset.toString(),
-                                    ativo: ativo.toString(),
-                                    data_modificacao__lt: data_value
-                                })
-                                break;
-                            case '__lte':
-                                addonsParams = new URLSearchParams({
-                                    description_html: description_html.toString(),
-                                    limit: limit.toString(),
-                                    offset: offset.toString(),
-                                    ativo: ativo.toString(),
-                                    data_modificacao__lte: data_value
-                                })
-                                break;
-                            case '__gt':
-                                addonsParams = new URLSearchParams({
-                                    description_html: description_html.toString(),
-                                    limit: limit.toString(),
-                                    offset: offset.toString(),
-                                    ativo: ativo.toString(),
-                                    data_modificacao__gt: data_value
-                                })
-                                break;
-                            case '__gte':
-                                addonsParams = new URLSearchParams({
-                                    description_html: description_html.toString(),
-                                    limit: limit.toString(),
-                                    offset: offset.toString(),
-                                    ativo: ativo.toString(),
-                                    data_modificacao__gte: data_value
-                                })
-                                break;
-                        }
-                    }
-                    else {
-                        switch (data_filter) {
-                            case '__lt':
-                                addonsParams = new URLSearchParams({
-                                    description_html: description_html.toString(),
-                                    limit: limit.toString(),
-                                    offset: offset.toString(),
-                                    ativo: ativo.toString(),
-                                    data_criacao__lt : data_value
-                                })
-                                break;
-                            case '__lte':
-                                addonsParams = new URLSearchParams({
-                                    description_html: description_html.toString(),
-                                    limit: limit.toString(),
-                                    offset: offset.toString(),
-                                    ativo: ativo.toString(),
-                                    data_criacao__lte: data_value
-                                })
-                                break;
-                            case '__gt':
-                                addonsParams = new URLSearchParams({
-                                    description_html: description_html.toString(),
-                                    limit: limit.toString(),
-                                    offset: offset.toString(),
-                                    ativo: ativo.toString(),
-                                    data_criacao__gt : data_value
-                                })
-                                break;
-                            case '__gte':
-                                addonsParams = new URLSearchParams({
-                                    description_html: description_html.toString(),
-                                    limit: limit.toString(),
-                                    offset: offset.toString(),
-                                    ativo: ativo.toString(),
-                                    data_criacao__gte : data_value
-                                })
-                                break;
-                        }
-                    }                    
-                }
-                else {
-                    addonsParams = new URLSearchParams({
-                        description_html: description_html.toString(),
-                        limit: limit.toString(),
-                        offset: offset.toString()
-                    })
-                }
-                await fetch(new URL(`${this.ApiUrl}/produto?${this.ApiParams}&${addonsParams}`), {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                    .then((response: { json: () => any }) => response.json())
-                    .then(function (result: object | PromiseLike<object>) {
-                        resolve(result)
-                    })
-                    .catch((err: string | undefined) => {
-                        new Error(err)
-                    })
-            } catch (error) {
-                reject(error)
-            }
-        })
-    }
-    /**
-     * Get Product by Id
-     * @param {number} ProductId
-     * @return {Promise<object>} 
-     */
-    public getProductById(ProductId:number): Promise<object> { 
-        return new Promise(async (resolve, reject) => {
-            try {
-                await fetch(new URL(`${this.ApiUrl}/produto/${ProductId}?${this.ApiParams}`), {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                    .then((response: { json: () => any }) => response.json())
-                    .then((result: object | PromiseLike<object>) => {
-                        resolve(result)
-                    })
-                    .catch((err: string | undefined) => {
-                        new Error(err)
-                    })
-            } catch (error) {
-                reject(error)
-            }
-        })
-    }
-    /**
-     * Get Product by SKU
-     * @param {string} ProducSKU
-     * @return {Promise<object>} 
-     */
-    public getProductBySKU(ProducSKU:string): Promise<object> { 
-        return new Promise(async (resolve, reject) => {
-            try {
-                let addonsParams = new URLSearchParams({
-                    sku: ProducSKU
-                })
-                await fetch(new URL(`${this.ApiUrl}/produto?${this.ApiParams}&${addonsParams}`), {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                    .then((response: { json: () => any }) => response.json())
-                    .then((result: object | PromiseLike<object>) => {
-                        resolve(result)
-                    })
-                    .catch((err: string | undefined) => {
-                        new Error(err)
-                    })
-            } catch (error) {
-                reject(error)
-            }
-        })
-    }
-    /**
-     * Add New Product
-     * @param {productAddData} ProductData
-     * @return {Promise<object>} 
-     */
-    public addProduct(ProductData:productAddData): Promise<object> { 
-        return new Promise(async (resolve, reject) => {
-            try {
-                
-                await fetch(new URL(`${this.ApiUrl}/produto?${this.ApiParams}`), {
-                        method: 'POST',
-                        body: JSON.stringify(ProductData),
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                    .then((response: { json: () => any }) => response.json())
-                    .then(function (result: object | PromiseLike<object>) {
-                        resolve(result)
-                    })
-                    .catch((err: string | undefined) => {
-                        new Error(err)
-                    })
-            } catch (error) {
-                reject(error)
-            }
-        })
-    }
-    /**
-     * Edit Product
-     * @param {number} ProductId
-     * @param {productEditData} ProductData
-     * @return {Promise<object>} 
-     */
-    public editProduct(ProductId:number, ProductData:productEditData): Promise<object> { 
-        return new Promise(async (resolve, reject) => {
-            try {
-               
-                await fetch(new URL(`${this.ApiUrl}/produto/${ProductId}?${this.ApiParams}`), {
-                        method: 'POST',
-                        body: JSON.stringify(ProductData),
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                    .then((response: { json: () => any }) => response.json())
-                    .then(function (result: object | PromiseLike<object>) {
-                        resolve(result)
-                    })
-                    .catch((err: string | undefined) => {
-                        new Error(err)
-                    })
-            } catch (error) {
-                reject(error)
-            }
-        })
     }
 
     // Category's
@@ -975,6 +760,865 @@ export default class LojaIntegrada {
                 await fetch(new URL(`${this.ApiUrl}/produto_preco/${PriceId}?${this.ApiParams}`), {
                     method: 'PUT',
                     body: JSON.stringify(PriceData),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    // Product's
+
+    /**
+     * Get All Products
+     * @param {number} limit
+     * @param {number} offset
+     * @param {boolean} description_html [Para retornar a descrição é necessário passar: true]
+     * @param {boolean} ativo
+     * @return {Promise<object>} 
+     */
+    public getProducts(limit:number = 20, offset:number = 0, description_html:boolean = false, ativo:boolean = true): Promise<object> { 
+        return new Promise(async (resolve, reject) => {
+            try {
+                let addonsParams = new URLSearchParams({
+                    description_html: description_html.toString(),
+                    limit: limit.toString(),
+                    offset: offset.toString()
+                })
+                await fetch(new URL(`${this.ApiUrl}/produto?${this.ApiParams}&${addonsParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+    /**
+     * Get Products by Date
+     * @param {number} limit
+     * @param {number} offset
+     * @param {boolean} description_html [Para retornar a descrição é necessário passar: true]
+     * @param {boolean} ativo
+     * @param {'criacao' | 'modificacao'} data_type
+     * @param {'__lt' | '__lte'  | '__gt' | '__gte'} data_filter
+     * @param {string} data_value
+     * @return {Promise<object>} 
+     */
+    public getProductsbyDate(limit:number = 20, offset:number = 0, description_html:boolean = false, ativo:boolean = true, data_type: 'criacao' | 'modificacao' | '' = '', data_filter:'__lt' | '__lte'  | '__gt' | '__gte' = '__lt', data_value:string = ''): Promise<object> { 
+        return new Promise(async (resolve, reject) => {
+            try {
+                let addonsParams
+                if (data_filter.length > 0) {
+                    if (data_type == 'modificacao') { 
+                        switch (data_filter) {
+                            case '__lt':
+                                addonsParams = new URLSearchParams({
+                                    description_html: description_html.toString(),
+                                    limit: limit.toString(),
+                                    offset: offset.toString(),
+                                    ativo: ativo.toString(),
+                                    data_modificacao__lt: data_value
+                                })
+                                break;
+                            case '__lte':
+                                addonsParams = new URLSearchParams({
+                                    description_html: description_html.toString(),
+                                    limit: limit.toString(),
+                                    offset: offset.toString(),
+                                    ativo: ativo.toString(),
+                                    data_modificacao__lte: data_value
+                                })
+                                break;
+                            case '__gt':
+                                addonsParams = new URLSearchParams({
+                                    description_html: description_html.toString(),
+                                    limit: limit.toString(),
+                                    offset: offset.toString(),
+                                    ativo: ativo.toString(),
+                                    data_modificacao__gt: data_value
+                                })
+                                break;
+                            case '__gte':
+                                addonsParams = new URLSearchParams({
+                                    description_html: description_html.toString(),
+                                    limit: limit.toString(),
+                                    offset: offset.toString(),
+                                    ativo: ativo.toString(),
+                                    data_modificacao__gte: data_value
+                                })
+                                break;
+                        }
+                    }
+                    else {
+                        switch (data_filter) {
+                            case '__lt':
+                                addonsParams = new URLSearchParams({
+                                    description_html: description_html.toString(),
+                                    limit: limit.toString(),
+                                    offset: offset.toString(),
+                                    ativo: ativo.toString(),
+                                    data_criacao__lt : data_value
+                                })
+                                break;
+                            case '__lte':
+                                addonsParams = new URLSearchParams({
+                                    description_html: description_html.toString(),
+                                    limit: limit.toString(),
+                                    offset: offset.toString(),
+                                    ativo: ativo.toString(),
+                                    data_criacao__lte: data_value
+                                })
+                                break;
+                            case '__gt':
+                                addonsParams = new URLSearchParams({
+                                    description_html: description_html.toString(),
+                                    limit: limit.toString(),
+                                    offset: offset.toString(),
+                                    ativo: ativo.toString(),
+                                    data_criacao__gt : data_value
+                                })
+                                break;
+                            case '__gte':
+                                addonsParams = new URLSearchParams({
+                                    description_html: description_html.toString(),
+                                    limit: limit.toString(),
+                                    offset: offset.toString(),
+                                    ativo: ativo.toString(),
+                                    data_criacao__gte : data_value
+                                })
+                                break;
+                        }
+                    }                    
+                }
+                else {
+                    addonsParams = new URLSearchParams({
+                        description_html: description_html.toString(),
+                        limit: limit.toString(),
+                        offset: offset.toString()
+                    })
+                }
+                await fetch(new URL(`${this.ApiUrl}/produto?${this.ApiParams}&${addonsParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+    /**
+     * Get Product by Id
+     * @param {number} ProductId
+     * @return {Promise<object>} 
+     */    
+    public getProductById(ProductId:number): Promise<object> { 
+        return new Promise(async (resolve, reject) => {
+            try {
+                await fetch(new URL(`${this.ApiUrl}/produto/${ProductId}?${this.ApiParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then((result: object | PromiseLike<object>) => {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+    /**
+     * Get Product by SKU
+     * @param {string} ProducSKU
+     * @return {Promise<object>} 
+     */
+    public getProductBySKU(ProducSKU:string): Promise<object> { 
+        return new Promise(async (resolve, reject) => {
+            try {
+                let addonsParams = new URLSearchParams({
+                    sku: ProducSKU
+                })
+                await fetch(new URL(`${this.ApiUrl}/produto?${this.ApiParams}&${addonsParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then((result: object | PromiseLike<object>) => {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+    /**
+     * Add New Product
+     * @param {productAddData} ProductData
+     * @return {Promise<object>} 
+     */
+    public addProduct(ProductData:productAddData): Promise<object> { 
+        return new Promise(async (resolve, reject) => {
+            try {
+                
+                await fetch(new URL(`${this.ApiUrl}/produto?${this.ApiParams}`), {
+                        method: 'POST',
+                        body: JSON.stringify(ProductData),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+    /**
+     * Edit Product
+     * @param {number} ProductId
+     * @param {productEditData} ProductData
+     * @return {Promise<object>} 
+     */
+    public editProduct(ProductId:number, ProductData:productEditData): Promise<object> { 
+        return new Promise(async (resolve, reject) => {
+            try {
+               
+                await fetch(new URL(`${this.ApiUrl}/produto/${ProductId}?${this.ApiParams}`), {
+                        method: 'POST',
+                        body: JSON.stringify(ProductData),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    // Product Image's
+
+    /**
+     * Get All Product Images
+     * @param {number} limit
+     * @param {number} offset
+     * @return {Promise<object>} 
+     */
+    public getProductImages(limit:number = 20, offset:number = 0): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let addonsParams = new URLSearchParams({
+                    limit: limit.toString(),
+                    offset: offset.toString()
+                })
+                await fetch(new URL(`${this.ApiUrl}/produto_imagem?${this.ApiParams}&${addonsParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }    
+    /**
+    * Get Product Image by ID
+    * @param {number} ProductImageId
+    * @return {Promise<object>} 
+    */
+    public getProductImage(ProductImageId:number): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {                
+                await fetch(new URL(`${this.ApiUrl}/produto_imagem/${ProductImageId}?${this.ApiParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+    /**
+    * Add Product Image
+    * @param {number} ProductImageId
+    * @param {productImageEditData} ProductImageData
+    * @return {Promise<object>} 
+    */
+    public addProductImage(ProductImageId:number, ProductImageData:productImageAddData): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {                
+                await fetch(new URL(`${this.ApiUrl}/produto_imagem/${ProductImageId}?${this.ApiParams}`), {
+                    method: 'post',
+                    body: JSON.stringify(ProductImageData),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+    /**
+    * Edit Product Image
+    * @param {number} ProductImageId
+    * @param {productImageEditData} ProductImageData
+    * @return {Promise<object>} 
+    */
+    public editProductImage(ProductImageId:number, ProductImageData:productImageEditData): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {                
+                await fetch(new URL(`${this.ApiUrl}/produto_imagem/${ProductImageId}?${this.ApiParams}`), {
+                    method: 'PUT',
+                    body: JSON.stringify(ProductImageData),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    // Seo's
+
+    /**
+     * Get All Seos
+     * @param {number} limit
+     * @param {number} offset
+     * @return {Promise<object>} 
+     */
+    public getSeos(limit:number = 20, offset:number = 0): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let addonsParams = new URLSearchParams({
+                    limit: limit.toString(),
+                    offset: offset.toString()
+                })
+                await fetch(new URL(`${this.ApiUrl}/produto_imagem?${this.ApiParams}&${addonsParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }    
+    /**
+    * Get Seo by ID
+    * @param {number} SeoId
+    * @return {Promise<object>} 
+    */
+    public getSeo(SeoId:number): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {                
+                await fetch(new URL(`${this.ApiUrl}/produto_imagem/${SeoId}?${this.ApiParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+    /**
+    * Add Seo
+    * @param {number} SeoId
+    * @param {seoEditData} SeoData
+    * @return {Promise<object>} 
+    */
+    public addSeo(SeoId:number, SeoData:seoAddData): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {                
+                await fetch(new URL(`${this.ApiUrl}/produto_imagem/${SeoId}?${this.ApiParams}`), {
+                    method: 'post',
+                    body: JSON.stringify(SeoData),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+    /**
+    * Edit Seo
+    * @param {number} SeoId
+    * @param {seoEditData} SeoData
+    * @return {Promise<object>} 
+    */
+    public editSeo(SeoId:number, SeoData:seoEditData): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {                
+                await fetch(new URL(`${this.ApiUrl}/produto_imagem/${SeoId}?${this.ApiParams}`), {
+                    method: 'PUT',
+                    body: JSON.stringify(SeoData),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    // Client's
+
+    /**
+     * Get All Clients
+     * @param {number} limit
+     * @param {number} offset
+     * @return {Promise<object>} 
+     */
+    public getClients(limit:number = 20, offset:number = 0): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let addonsParams = new URLSearchParams({
+                    limit: limit.toString(),
+                    offset: offset.toString()
+                })
+                await fetch(new URL(`${this.ApiUrl}/cliente?${this.ApiParams}&${addonsParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }    
+    /**
+    * Get Client by ID
+    * @param {number} ClientId
+    * @return {Promise<object>} 
+    */
+    public getClient(ClientId:number): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {                
+                await fetch(new URL(`${this.ApiUrl}/cliente/${ClientId}?${this.ApiParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+    /**
+    * Add Client
+    * @param {number} ClientId
+    * @param {clientEditData} ClientData
+    * @return {Promise<object>} 
+    */
+    public addClient(ClientId:number, ClientData:clientAddData): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {                
+                await fetch(new URL(`${this.ApiUrl}/cliente/${ClientId}?${this.ApiParams}`), {
+                    method: 'post',
+                    body: JSON.stringify(ClientData),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+    /**
+    * Edit Client
+    * @param {number} ClientId
+    * @param {clientEditData} ClientData
+    * @return {Promise<object>} 
+    */
+    public editClient(ClientId:number, ClientData:clientEditData): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {                
+                await fetch(new URL(`${this.ApiUrl}/cliente/${ClientId}?${this.ApiParams}`), {
+                    method: 'PUT',
+                    body: JSON.stringify(ClientData),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    // Group's
+
+    /**
+     * Get All Groups
+     * @param {number} limit
+     * @param {number} offset
+     * @return {Promise<object>} 
+     */
+     public getGroups(limit:number = 20, offset:number = 0): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let addonsParams = new URLSearchParams({
+                    limit: limit.toString(),
+                    offset: offset.toString()
+                })
+                await fetch(new URL(`${this.ApiUrl}/grupo?${this.ApiParams}&${addonsParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }    
+    /**
+    * Get Group by ID
+    * @param {number} GroupId
+    * @return {Promise<object>} 
+    */
+    public getGroup(GroupId:number): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {                
+                await fetch(new URL(`${this.ApiUrl}/grupo/${GroupId}?${this.ApiParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    // Bank's
+
+    /**
+     * Get All Banks
+     * @param {number} limit
+     * @param {number} offset
+     * @return {Promise<object>} 
+     */
+     public getBanks(limit:number = 20, offset:number = 0): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let addonsParams = new URLSearchParams({
+                    limit: limit.toString(),
+                    offset: offset.toString()
+                })
+                await fetch(new URL(`${this.ApiUrl}/banco?${this.ApiParams}&${addonsParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }    
+    /**
+    * Get Bank by ID
+    * @param {number} BankId
+    * @return {Promise<object>} 
+    */
+    public getBank(BankId:number): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {                
+                await fetch(new URL(`${this.ApiUrl}/banco/${BankId}?${this.ApiParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    // Payment's
+
+    /**
+     * Get All Payments
+     * @param {number} limit
+     * @param {number} offset
+     * @return {Promise<object>} 
+     */
+     public getPayments(limit:number = 20, offset:number = 0): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let addonsParams = new URLSearchParams({
+                    limit: limit.toString(),
+                    offset: offset.toString()
+                })
+                await fetch(new URL(`${this.ApiUrl}/pagamento?${this.ApiParams}&${addonsParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }    
+    /**
+    * Get Payment by ID
+    * @param {number} PaymentId
+    * @return {Promise<object>} 
+    */
+    public getPayment(PaymentId:number): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {                
+                await fetch(new URL(`${this.ApiUrl}/pagamento/${PaymentId}?${this.ApiParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    // Shipping's
+
+    /**
+     * Get All Shippings
+     * @param {number} limit
+     * @param {number} offset
+     * @return {Promise<object>} 
+     */
+     public getShippings(limit:number = 20, offset:number = 0): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let addonsParams = new URLSearchParams({
+                    limit: limit.toString(),
+                    offset: offset.toString()
+                })
+                await fetch(new URL(`${this.ApiUrl}/envio?${this.ApiParams}&${addonsParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }    
+    /**
+    * Get Shipping by ID
+    * @param {number} ShippingId
+    * @return {Promise<object>} 
+    */
+    public getShipping(ShippingId:number): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {                
+                await fetch(new URL(`${this.ApiUrl}/envio/${ShippingId}?${this.ApiParams}`), {
+                        method: 'GET',
                         headers: {
                             'Content-Type': 'application/json'
                         }
