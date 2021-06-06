@@ -5,7 +5,7 @@ dotenv.config()
 
 const LI = new LojaIntegrada(`${process.env.APIKEY}`, `${process.env.APPKEY}`)
 
-LI.getShippings()
+LI.getCategories(20, 10)
     .then((result:any) => {
         console.log(result)
     }).catch((err:any)  => {

@@ -1,7 +1,7 @@
 import LojaIntegrada from './services/loja-integrada'
 import dotenv from 'dotenv'
 
-dotenv.config({ path: './test.env' })
+dotenv.config({ path: './.env.local' })
 
 const LI = new LojaIntegrada(`${process.env.APIKEY}`, `${process.env.APPKEY}`, true)
 

@@ -22,7 +22,9 @@ import type {
     seoEditData,
     seoAddData,
     clientEditData,
-    clientAddData
+    clientAddData,
+    situationsEditData,
+    ordersFilterData
 } from '../../type'
 
 const ApiUrlProd:string = 'https://api.awsli.com.br/api/v1'
@@ -37,12 +39,12 @@ export default class LojaIntegrada {
     AppKey: string
     ApiParams: object
     /**
-    * LojaIntegrada constructor
-    * @constructor
+    * LojaIntegrada
     * @param {string} ApiKey Chave de Api
     * @param {string} AppKey Chave de Aplicacao
     * @param {boolean} DesBug Modo Produção ou Desenvolvimento
-    * @return {class}
+    * @example
+    * const LI = new LojaIntegrada('ApiKey', 'AppKey')
     */
     constructor(ApiKey: string, AppKey: string, DesBug: boolean = false) {
         this.ApiUrl = (DesBug == false) ? ApiUrlProd : ApiUrlTest
@@ -55,6 +57,26 @@ export default class LojaIntegrada {
         })            
     }
 
+    private Requestfy(Url:string, method:string, headers: object): Promise<object>  {
+        return new Promise(async (resolve, reject) => {
+            try {
+                await fetch(new URL(Url), {
+                    method: method,
+                    headers: headers
+                })
+                .then((response: { json: () => any }) => response.json())
+                .then(function (result: object | PromiseLike<object>) {
+                    resolve(result)
+                })
+                .catch((err: string | undefined) => {
+                    new Error(err)
+                })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
     // Category's
 
     /**
@@ -63,30 +85,18 @@ export default class LojaIntegrada {
      * @param {number} offset
      * @return {Promise<object>} 
      */
-    public getCategories(limit:number = 20, offset:number = 0): Promise<object> {
-        return new Promise(async (resolve, reject) => {
-            try {
-                let addonsParams = new URLSearchParams({
-                    limit: limit.toString(),
-                    offset: offset.toString()
-                })
-                await fetch(new URL(`${this.ApiUrl}/categoria?${this.ApiParams}&${addonsParams}`), {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                    .then((response: { json: () => any }) => response.json())
-                    .then(function (result: object | PromiseLike<object>) {
-                        resolve(result)
-                    })
-                    .catch((err: string | undefined) => {
-                        new Error(err)
-                    })
-            } catch (error) {
-                reject(error)
-            }
+    public getCategories(limit: number = 20, offset: number = 0): Promise<object> {
+        let addonsParams = new URLSearchParams({
+            limit: limit.toString(),
+            offset: offset.toString()
         })
+        return this.Requestfy(
+            `${this.ApiUrl}/categoria?${this.ApiParams}&${addonsParams}`,
+            'GET',
+            {
+                'Content-Type': 'application/json'
+            }
+        )
     }
     /**
      * Get List Categories by Id
@@ -1404,7 +1414,7 @@ export default class LojaIntegrada {
      * @param {number} offset
      * @return {Promise<object>} 
      */
-     public getGroups(limit:number = 20, offset:number = 0): Promise<object> {
+    public getGroups(limit:number = 20, offset:number = 0): Promise<object> {
         return new Promise(async (resolve, reject) => {
             try {
                 let addonsParams = new URLSearchParams({
@@ -1464,7 +1474,7 @@ export default class LojaIntegrada {
      * @param {number} offset
      * @return {Promise<object>} 
      */
-     public getBanks(limit:number = 20, offset:number = 0): Promise<object> {
+    public getBanks(limit:number = 20, offset:number = 0): Promise<object> {
         return new Promise(async (resolve, reject) => {
             try {
                 let addonsParams = new URLSearchParams({
@@ -1524,7 +1534,7 @@ export default class LojaIntegrada {
      * @param {number} offset
      * @return {Promise<object>} 
      */
-     public getPayments(limit:number = 20, offset:number = 0): Promise<object> {
+    public getPayments(limit:number = 20, offset:number = 0): Promise<object> {
         return new Promise(async (resolve, reject) => {
             try {
                 let addonsParams = new URLSearchParams({
@@ -1584,7 +1594,7 @@ export default class LojaIntegrada {
      * @param {number} offset
      * @return {Promise<object>} 
      */
-     public getShippings(limit:number = 20, offset:number = 0): Promise<object> {
+    public getShippings(limit:number = 20, offset:number = 0): Promise<object> {
         return new Promise(async (resolve, reject) => {
             try {
                 let addonsParams = new URLSearchParams({
@@ -1636,5 +1646,387 @@ export default class LojaIntegrada {
         })
     }
 
+    // Situation's
+
+    /**
+     * Get All Situations
+     * @param {number} limit
+     * @param {number} offset
+     * @return {Promise<object>} 
+     */
+    public getSituations(limit:number = 20, offset:number = 0): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let addonsParams = new URLSearchParams({
+                    limit: limit.toString(),
+                    offset: offset.toString()
+                })
+                await fetch(new URL(`${this.ApiUrl}/situacao?${this.ApiParams}&${addonsParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+    /**
+     * Get Situations by Order Id
+     * @param {number} OrderId
+     * @return {Promise<object>} 
+     */    
+    public getSituationsByOrdersId(OrderId:number): Promise<object> { 
+        return new Promise(async (resolve, reject) => {
+            try {
+                await fetch(new URL(`${this.ApiUrl}/situacao/pedido/${OrderId}?${this.ApiParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then((result: object | PromiseLike<object>) => {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    } 
+    /**
+     * Edit Situations by Order Id
+     * @param {number} OrderId
+     * @param {situationsEditData} SituationsData
+     * @return {Promise<object>} 
+     */    
+    public editSituationsByOrdersId(OrderId:number, SituationsData:situationsEditData): Promise<object> { 
+        return new Promise(async (resolve, reject) => {
+            try {
+                await fetch(new URL(`${this.ApiUrl}/situacao/pedido/${OrderId}?${this.ApiParams}`), {
+                        method: 'PUT',
+                        body: JSON.stringify(SituationsData),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then((result: object | PromiseLike<object>) => {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    } 
+
+    // Historical Situation's
+    /**
+     * 
+     * Get All Historical Situations
+     * @param {number} limit
+     * @param {number} offset
+     * @return {Promise<object>} 
+     */
+    public getHistoricalSituations(limit:number = 20, offset:number = 0): Promise<object> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let addonsParams = new URLSearchParams({
+                    limit: limit.toString(),
+                    offset: offset.toString()
+                })
+                await fetch(new URL(`${this.ApiUrl}/situacao?${this.ApiParams}&${addonsParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    /**
+     * Get Historical Situations by Order Id
+     * @param {number} OrderId
+     * @return {Promise<object>} 
+     */    
+    public getHistoricalSituationsByOrderId(OrderId:number): Promise<object> { 
+        return new Promise(async (resolve, reject) => {
+            try {
+                await fetch(new URL(`${this.ApiUrl}/situacao_historico/search/?numero=${OrderId}&${this.ApiParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then((result: object | PromiseLike<object>) => {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    // Order's
+
+    /**
+     * Get All Orders
+     * @param {number} limit
+     * @param {number} offset
+     * @return {Promise<object>} 
+     */
+    public getOrders(limit:number = 20, offset:number = 0): Promise<object> { 
+        return new Promise(async (resolve, reject) => {
+            try {
+                let addonsParams = new URLSearchParams({
+                    limit: limit.toString(),
+                    offset: offset.toString()
+                })
+                await fetch(new URL(`${this.ApiUrl}/pedido/search/?${this.ApiParams}&${addonsParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    /**
+     * Get All Orders by Filter
+     * @param {number} limit
+     * @param {number} offset
+     *  @param {ordersFilterData} OrdersFilterData
+     * @return {Promise<object>} 
+     */
+    public getOrdersbyFilter(limit:number = 20, offset:number = 0, OrdersFilterData:ordersFilterData): Promise<object> { 
+        return new Promise(async (resolve, reject) => {
+            try {
+                let addonsParams = new URLSearchParams({
+                    limit: limit.toString(),
+                    offset: offset.toString()
+                })
+                let KeysData = Object.keys(OrdersFilterData);
+                KeysData.map((filter: string) => {
+                    addonsParams.append(filter, OrdersFilterData[filter].toString())
+                })
+                await fetch(new URL(`${this.ApiUrl}/pedido/search/?${this.ApiParams}&${addonsParams.toString()}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    /**
+     * Get All Orders by Date
+     * @param {number} limit
+     * @param {number} offset
+     * @return {Promise<object>} 
+     */
+    public getOrdersbyDate(limit:number = 20, offset:number = 0, data_type: 'atualizado' | 'criado' | 'criado_antes' | '' = '', data_value:string = ''): Promise<object> { 
+        return new Promise(async (resolve, reject) => {
+            try {
+                let addonsParams;
+                if (data_type.length > 0) {
+                        switch (data_type) {
+                            case 'atualizado':
+                                addonsParams = new URLSearchParams({
+                                    limit: limit.toString(),
+                                    offset: offset.toString(),
+                                    since_atualizado: data_value
+                                })
+                                break;
+                            case 'criado':
+                                addonsParams = new URLSearchParams({
+                                    limit: limit.toString(),
+                                    offset: offset.toString(),
+                                    since_criado: data_value
+                                })
+                                break;
+                            case 'criado_antes':
+                                addonsParams = new URLSearchParams({
+                                    limit: limit.toString(),
+                                    offset: offset.toString(),
+                                    until_criado: data_value
+                                })
+                                break;
+                            
+                        }
+                }
+                else {
+                    addonsParams = new URLSearchParams({
+                        limit: limit.toString(),
+                        offset: offset.toString()
+                    })
+                }
+                await fetch(new URL(`${this.ApiUrl}/pedido/search/?${this.ApiParams}&${addonsParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    /**
+     * Get All Orders by Client Id
+     * @param {number} limit
+     * @param {number} offset
+     * @param {number} ClientId
+     * @return {Promise<object>} 
+     */
+    public getOrdersbyClientId(limit:number = 20, offset:number = 0, ClientId:number): Promise<object> { 
+        return new Promise(async (resolve, reject) => {
+            try {
+                let addonsParams = new URLSearchParams({
+                    limit: limit.toString(),
+                    offset: offset.toString(),
+                    cliente_id: ClientId.toString()
+                })
+                await fetch(new URL(`${this.ApiUrl}/pedido/search/?${this.ApiParams}&${addonsParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    /**
+     * Get All Orders by Payments Id
+     * @param {number} limit
+     * @param {number} offset
+     * @param {number} PaymentsId
+     * @return {Promise<object>} 
+     */
+     public getOrdersbyPaymentsId(limit:number = 20, offset:number = 0, PaymentsId:number): Promise<object> { 
+        return new Promise(async (resolve, reject) => {
+            try {
+                let addonsParams = new URLSearchParams({
+                    limit: limit.toString(),
+                    offset: offset.toString(),
+                    pagamento_id: PaymentsId.toString()
+                })
+                await fetch(new URL(`${this.ApiUrl}/pedido/search/?${this.ApiParams}&${addonsParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    /**
+     * Get All Orders by Start Order Id
+     * @param {number} limit
+     * @param {number} offset
+     * @param {number} OrderId
+     * @return {Promise<object>} 
+     */
+     public getOrdersbyStartOrdertId(limit:number = 20, offset:number = 0, OrderId:number): Promise<object> { 
+        return new Promise(async (resolve, reject) => {
+            try {
+                let addonsParams = new URLSearchParams({
+                    limit: limit.toString(),
+                    offset: offset.toString(),
+                    since_numero: OrderId.toString()
+                })
+                await fetch(new URL(`${this.ApiUrl}/pedido/search/?${this.ApiParams}&${addonsParams}`), {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response: { json: () => any }) => response.json())
+                    .then(function (result: object | PromiseLike<object>) {
+                        resolve(result)
+                    })
+                    .catch((err: string | undefined) => {
+                        new Error(err)
+                    })
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
     
 }
