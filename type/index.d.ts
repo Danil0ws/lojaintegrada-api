@@ -9,14 +9,14 @@ interface categoryDataIds {
     [index: number]: any;
 }
 interface categoryAddData {
-nome: string;
-descricao?: string;
-categoria_pai?: string;
+    nome: string;
+    descricao?: string;
+    categoria_pai?: string;
 }
 interface categoryEditData {
-nome?: string;
-descricao?: string;
-categoria_pai?: string;
+    nome?: string;
+    descricao?: string;
+    categoria_pai?: string;
 }
 interface brandDataIds {
 join(arg0: string): string;
